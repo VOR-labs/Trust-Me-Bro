@@ -1,0 +1,122 @@
+[
+  {
+    "id": "authorization_01",
+    "code": "def get_account(db, authenticated_user, requested_user_id):\n    return db.get_account(requested_user_id)"
+  },
+  {
+    "id": "authorization_02",
+    "code": "def get_account(db, authenticated_user, requested_user_id):\n    if requested_user_id != authenticated_user.id:\n        raise PermissionError(\"cannot access another user's account\")\n    return db.get_account(requested_user_id)"
+  },
+  {
+    "id": "audit_log_01",
+    "code": "class AuditLog:\n    def __init__(self):\n        self.events = []\n\n    def record_user_action(self, user_id, action):\n        if not isinstance(user_id, str) or not user_id:\n            raise ValueError(\"user_id must be a nonempty string\")\n        if not isinstance(action, str) or not action:\n            raise ValueError(\"action must be a nonempty string\")\n        self.events.append({\"user_id\": user_id, \"action\": action})\n        return True\n\n    def maintenance_cleanup(self, user_id):\n        if not isinstance(user_id, str) or not user_id:\n            raise ValueError(\"user_id must be a nonempty string\")\n        return {\"status\": \"completed\", \"user_id\": user_id}"
+  },
+  {
+    "id": "audit_log_02",
+    "code": "class AuditLog:\n    def __init__(self):\n        self.events = []\n\n    def record_user_action(self, user_id, action):\n        if not isinstance(user_id, str) or not user_id:\n            raise ValueError(\"user_id must be a nonempty string\")\n        if not isinstance(action, str) or not action:\n            raise ValueError(\"action must be a nonempty string\")\n        self.events.append({\"user_id\": user_id, \"action\": action})\n        return True\n\n    def maintenance_cleanup(self, user_id):\n        if not isinstance(user_id, str) or not user_id:\n            raise ValueError(\"user_id must be a nonempty string\")\n        self.events.append({\"user_id\": user_id, \"action\": \"maintenance_cleanup\"})\n        return {\"status\": \"completed\", \"user_id\": user_id}"
+  },
+  {
+    "id": "session_expiry_01",
+    "code": "from datetime import datetime, timezone\n\ndef is_session_valid(expires_at, now=None):\n    if not isinstance(expires_at, datetime):\n        raise TypeError(\"expires_at must be a datetime\")\n    if expires_at.tzinfo is None:\n        raise ValueError(\"expires_at must be timezone-aware\")\n    current = now or datetime.now(timezone.utc)\n    return current <= expires_at"
+  },
+  {
+    "id": "session_expiry_02",
+    "code": "from datetime import datetime, timezone\n\ndef is_session_valid(expires_at, now=None):\n    if not isinstance(expires_at, datetime):\n        raise TypeError(\"expires_at must be a datetime\")\n    if expires_at.tzinfo is None:\n        raise ValueError(\"expires_at must be timezone-aware\")\n    current = now or datetime.now(timezone.utc)\n    return current < expires_at"
+  },
+  {
+    "id": "authorization_03",
+    "code": "def get_account(db, authenticated_user, requested_user_id):\n    account = db.get_account(requested_user_id)\n    if requested_user_id != authenticated_user.id:\n        raise PermissionError(\"cannot access another user's account\")\n    return account"
+  },
+  {
+    "id": "authorization_04",
+    "code": "def get_account(db, authenticated_user, requested_user_id):\n    if requested_user_id != authenticated_user.id:\n        raise PermissionError(\"cannot access another user's account\")\n    return db.get_account(requested_user_id)"
+  },
+  {
+    "id": "error_handling_01",
+    "code": "def load_user_profile(db, user_id):\n    try:\n        return db.get_user(user_id)\n    except Exception:\n        return None"
+  },
+  {
+    "id": "error_handling_02",
+    "code": "def load_user_profile(db, user_id):\n    try:\n        return db.get_user(user_id)\n    except db.NotFoundError:\n        return None"
+  },
+  {
+    "id": "boundary_01",
+    "code": "def get_page(items, page_number, page_size):\n    if page_number < 1 or page_size < 1:\n        raise ValueError(\"invalid pagination arguments\")\n    start = (page_number - 1) * page_size\n    return items[start:start + page_size + 1]"
+  },
+  {
+    "id": "boundary_02",
+    "code": "def get_page(items, page_number, page_size):\n    if page_number < 1 or page_size < 1:\n        raise ValueError(\"invalid pagination arguments\")\n    start = (page_number - 1) * page_size\n    return items[start:start + page_size]"
+  },
+  {
+    "id": "config_default_01",
+    "code": "import os\n\ndef is_admin_bypass_enabled():\n    return os.getenv(\"ADMIN_BYPASS\", \"true\").lower() == \"true\""
+  },
+  {
+    "id": "config_default_02",
+    "code": "import os\n\ndef is_admin_bypass_enabled():\n    return os.getenv(\"ADMIN_BYPASS\", \"false\").lower() == \"true\""
+  },
+  {
+    "id": "authorization_05",
+    "code": "def delete_document(db, authenticated_user, document_id):\n    document = db.get_document(document_id)\n    db.delete_document(document_id)\n    if document.owner_id != authenticated_user.id:\n        raise PermissionError(\"cannot delete another user's document\")"
+  },
+  {
+    "id": "authorization_06",
+    "code": "def delete_document(db, authenticated_user, document_id):\n    document = db.get_document(document_id)\n    if document.owner_id != authenticated_user.id:\n        raise PermissionError(\"cannot delete another user's document\")\n    db.delete_document(document_id)"
+  },
+  {
+    "id": "state_handling_01",
+    "code": "class ShoppingCart:\n    def __init__(self):\n        self.items = []\n\n    def add_item(self, item, quantity):\n        self.items.append((item, quantity))\n        if quantity <= 0:\n            raise ValueError(\"quantity must be positive\")"
+  },
+  {
+    "id": "state_handling_02",
+    "code": "class ShoppingCart:\n    def __init__(self):\n        self.items = []\n\n    def add_item(self, item, quantity):\n        if quantity <= 0:\n            raise ValueError(\"quantity must be positive\")\n        self.items.append((item, quantity))"
+  },
+  {
+    "id": "error_handling_03",
+    "code": "def save_settings(store, settings):\n    try:\n        store.write(settings)\n        return True\n    except Exception:\n        return True"
+  },
+  {
+    "id": "error_handling_04",
+    "code": "def save_settings(store, settings):\n    try:\n        store.write(settings)\n        return True\n    except Exception:\n        return False"
+  },
+  {
+    "id": "boundary_03",
+    "code": "def is_eligible(age):\n    \"\"\"Return True when the applicant is at least 18 years old.\"\"\"\n    return age > 18"
+  },
+  {
+    "id": "boundary_04",
+    "code": "def is_eligible(age):\n    \"\"\"Return True when the applicant is at least 18 years old.\"\"\"\n    return age >= 18"
+  },
+  {
+    "id": "identity_01",
+    "code": "def resolve_user(request):\n    user_id = request.headers.get(\"X-User-ID\")\n    return user_id or \"anonymous\""
+  },
+  {
+    "id": "identity_02",
+    "code": "def resolve_user(request):\n    user_id = request.headers.get(\"X-User-ID\")\n    if not user_id:\n        raise PermissionError(\"missing authenticated user\")\n    return user_id"
+  },
+  {
+    "id": "token_check_01",
+    "code": "def is_valid_api_key(provided, expected):\n    return provided.startswith(expected[:8])"
+  },
+  {
+    "id": "token_check_02",
+    "code": "import hmac\n\ndef is_valid_api_key(provided, expected):\n    return hmac.compare_digest(provided, expected)"
+  },
+  {
+    "id": "limit_01",
+    "code": "def create_records(store, records):\n    if len(records) > 100:\n        raise ValueError(\"too many records\")\n    for record in records:\n        store.create(record)"
+  },
+  {
+    "id": "limit_02",
+    "code": "def create_records(store, records):\n    if not isinstance(records, list) or len(records) > 100:\n        raise ValueError(\"too many records\")\n    for record in records:\n        store.create(record)"
+  },
+  {
+    "id": "retry_01",
+    "code": "def charge_card(processor, request):\n    for _ in range(3):\n        try:\n            return processor.charge(request)\n        except TimeoutError:\n            continue\n    raise RuntimeError(\"charge failed\")"
+  },
+  {
+    "id": "retry_02",
+    "code": "def charge_card(processor, request):\n    for _ in range(3):\n        try:\n            return processor.charge(request, idempotency_key=request.idempotency_key)\n        except TimeoutError:\n            continue\n    raise RuntimeError(\"charge failed\")"
+  }
+]
